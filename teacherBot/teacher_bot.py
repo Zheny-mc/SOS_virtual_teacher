@@ -182,6 +182,8 @@ def test_question_input_correct(query):
     chat_id, message_id = get_contacts(query)
 
     cur_question = db.get_current_question(chat_id)
+    del cur_question['_id']
+
     id_cur_q = db.get_count_question()
     cur_question["id"] = id_cur_q
     db.create_question(cur_question)

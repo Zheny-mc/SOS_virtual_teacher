@@ -1,4 +1,3 @@
-import matplotlib
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
@@ -6,11 +5,9 @@ import traceback
 import logging
 
 from data.connectDB import db
-matplotlib.use('agg') # включаем серверный режим
-
 
 def get_df_from_db():
-    lst_users = db.get_all_users()
+    lst_users = db.get_all_user()
     data_c = [user for user in lst_users]
     df = pd.DataFrame.from_records(data_c)
     return df

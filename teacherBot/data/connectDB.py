@@ -1,59 +1,42 @@
 from pymongo import MongoClient
 
+from teacherBot.data.implement_request import impl_request
+
+
 class DataBase:
 	def __init__(self):
 		cluster = MongoClient("mongodb://localhost:27017")
-
-		self.db = cluster["QuizBot"]
-		self.users = self.db["Users"]
+		self.db = cluster["LocalQuestion"]
 		self.current_question = self.db["CurrentQuestion"]
-		self.questions = self.db["Questions"]
 
-		self.questions_count = self.questions.count_documents({})
-
+	# ---------------------- user ------------------------
 	def get_user(self, chat_id):
-		user = self.users.find_one({"chat_id": chat_id})
+		data = { "id": chat_id }
+		return impl_request(type_url='get_question', data=data)
 
-		if user is not None:
-			return user
+	def get_all_user(self):
+		return impl_request(type_url='get_all_user')
 
-		user = {
-			"chat_id": chat_id,
-			"is_passing": False,
-			"is_passed": False,
-			"question_index": None,
-			"answers": []
-		}
-
-		self.users.insert_one(user)
-
-		return user
-
-	def get_all_users(self):
-		return self.users.find({})
-
-	def set_user(self, chat_id, update):
-		self.users.update_one({"chat_id": chat_id}, {"$set": update})
-
-	def get_count_question(self):
-		return self.questions.count_documents({})
+	def set_user(self, chat_id, update: dict):
+		data = { key: val for key, val in update.items() }
+		data["chat_id"] = chat_id
+		impl_request(type_URL='update_user', data=data)
 
 	# ---------------------- question ------------------------
-	def get_question(self, index):
-		return self.questions.find_one({"id": index})
+	def get_count_question(self):
+		res = impl_request(type_url='count_question')
+		return res['count']
+
+	def get_question(self, id: int):
+		data = {"id": id}
+		return impl_request('get_question', data)
 
 	def create_question(self, question):
-		self.questions.insert_one(question)
+		impl_request('create_question', question)
 
 	def delete_question(self, id):
-		question = self.questions.find_one({"id": id})
-		if question is not None:
-			self.questions.delete_many(question)
-		else:
-			print(f"Error delete question with {id}")
-
-	def update_question(self, id, kwargs):
-		self.questions.update_one({"id": id}, {'$set': kwargs})
+		data = {"id": id}
+		impl_request('delete_question', data)
 
 	# ------------------ current question --------------------
 	def get_current_question(self, id):
