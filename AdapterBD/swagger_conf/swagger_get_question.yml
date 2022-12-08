@@ -1,0 +1,21 @@
+summary: "Получить вопрос"
+description: "Получение вопроса по его id"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "other description"
+  required: true
+  schema:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example : 0
+responses:
+  405:
+    description: "Invalid input"

@@ -1,0 +1,13 @@
+summary: "Получить все вопросы"
+description: "Получить все вопросы"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "other description"
+responses:
+  405:
+    description: "Invalid input"

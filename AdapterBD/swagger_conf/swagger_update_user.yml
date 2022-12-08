@@ -1,0 +1,41 @@
+summary: "Дать возможность студенту пройти тест еще раз"
+description: "Обновить данные о стеденте"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "Дать возможность студенту пройти тест еще раз"
+  required: true
+  schema:
+    type: "object"
+    properties:
+      chat_id:
+        type: "integer"
+        example: 1163778484
+      is_passing:
+        type: "bool"
+        example: false
+      question_index:
+        type: "integer"
+        example: 0
+      is_passed:
+        type: "bool"
+        example: false
+      answers:
+        type: "array[int]"
+        example: []
+      true_count:
+        type: "integer"
+        format: "int64"
+        example: 0
+      percentages:
+        type: "integer"
+        format: "int64"
+        example: 0
+
+responses:
+  405:
+    description: "Invalid input"

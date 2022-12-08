@@ -1,0 +1,22 @@
+summary: "Получить пользователя"
+description: "Получить пользователя по его chat_id"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "other description"
+  required: true
+  schema:
+    type: "object"
+    properties:
+      chat_id:
+        type: "integer"
+        format: "int64"
+        example : 1163778484
+
+responses:
+  405:
+    description: "Invalid input"
