@@ -1,49 +1,8 @@
 import telebot
-from pymongo import MongoClient
 
+from studentBot.data.connectDB import db
 
 bot = telebot.TeleBot("5274095592:AAG3dGQeLDE5_JnOH05WbPqjFEdk8b3JWOQ")
-
-
-class DataBase:
-	def __init__(self):
-		cluster = MongoClient("mongodb://localhost:27017")
-
-		self.db = cluster["QuizBot"]
-		self.users = self.db["Users"]
-		self.questions = self.db["Questions"]
-
-		self.questions_count = len(list(self.questions.find({})))
-
-	def get_user(self, chat_id):
-		user = self.users.find_one({"chat_id": chat_id})
-
-		if user is not None:
-			return user
-
-		user = {
-			"chat_id": chat_id,
-			"is_passing": False,
-			"is_passed": False,
-			"question_index": None,
-			"answers": [],
-			"true_count": 0,
-			"false_count": 0,
-			"percentages": 0
-		}
-
-		self.users.insert_one(user)
-
-		return user
-
-	def set_user(self, chat_id, update):
-		self.users.update_one({"chat_id": chat_id}, {"$set": update})
-
-	def get_question(self, index):
-		return self.questions.find_one({"id": index})
-
-db = DataBase()
-
 
 @bot.message_handler(commands=["start"])
 def start(message):
@@ -56,9 +15,10 @@ def start(message):
 	if user["is_passing"]:
 		return
 
+	user["question_index"] = 0
+	user["is_passing"] = True
 	db.set_user(message.chat.id, {"question_index": 0, "is_passing": True})
 
-	user = db.get_user(message.chat.id)
 	post = get_question_message(user)
 	if post is not None:
 		bot.send_message(message.from_user.id, post["text"], reply_markup=post["keyboard"])
@@ -95,15 +55,16 @@ def next(query):
 
 
 def get_question_message(user):
-	if user["question_index"] == db.questions_count:
+	count_question = db.get_count_question()
+	if user["question_index"] == count_question:
 		count = 0
-		for question_index, question in enumerate(db.questions.find({})):
+		for question_index, question in enumerate( sorted(db.get_all_question(), key=lambda q: q['id']) ):
 			if question["correct"] == user["answers"][question_index]:
 				count += 1
-		percents = round(100 * count / db.questions_count)
+		percents = round(100 * count / count_question)
 
 		db.set_user(user["chat_id"],
-					{"percentages": percents, 'true_count': count, "false_count": db.questions_count})
+					{"percentages": percents, 'true_count': count, "false_count": count_question})
 
 		if percents < 40:
 			smile = "😥"

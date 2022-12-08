@@ -39,10 +39,21 @@ def get_count_question():
     return Response(response=json.dumps(count),
                     status=200,
                     mimetype='application/json')
+
+@app.route("/get_all_question", methods=["POST"])
+def get_all_question():
+    questions = []
+    for q in db.get_all_question():
+        del q['_id']
+        questions.append(q)
+
+    return Response(response=json.dumps(questions),
+                    status=200,
+                    mimetype='application/json')
 # ---------------------- user ------------------------
 @app.route("/get_user", methods=["POST"])
 def get_user():
-    chat_id = request.get_json()
+    chat_id = request.get_json()['chat_id']
     user = db.get_user(chat_id)
     del user["_id"]
     return Response(response=json.dumps(user),

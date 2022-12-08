@@ -1,7 +1,7 @@
 import telebot
 
 from Analize_result_tests import *
-from data.connectDB import db
+from teacherBot.data.connectDB import db
 
 bot = telebot.TeleBot("5976670407:AAFRFqrMLx0l4vxydqyXicvnwWDanaetanw")
 

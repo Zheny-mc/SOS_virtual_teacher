@@ -4,7 +4,7 @@ import os
 import traceback
 import logging
 
-from data.connectDB import db
+from teacherBot.data.connectDB import db
 
 def get_df_from_db():
     lst_users = db.get_all_user()
