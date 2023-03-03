@@ -39,7 +39,7 @@ def getQuestionForTest(testName="Ввод и Вывод", courseName="Programmin
 
 def writeScoreTest(testName="Ввод и Вывод", studName="Vova", score=100):
     q1 = """
-        match (test:TEST {name: $testName}) create (stud:STUDENT {name: $studName}), (test) -[:PASSED {score: $score}]-> (stud)
+        match (test:TEST {name: $testName}) create (test) -[:PASSED {score: $score}]-> (stud:STUDENT {name: $studName})
         """
     dct = {"testName": testName, "studName": studName, "score": score}
     try:
@@ -51,12 +51,10 @@ def writeScoreTest(testName="Ввод и Вывод", studName="Vova", score=100
 
 def writeResultTest(answers={"Что такое input?": True, "Что такое print?":False}, testName="Ввод и Вывод", studName="Vova"):
     getQuestionForTest()
-    for quest, answer in answers.items():
-        q1 = """
-            match (quest:QUESTION {name: $quest}) -[]-> (test:TEST {name: $testName}), (stud:STUDENT {name: $studName})
-            create (quest) - [:ANSWERED {isTrue: $answer}] -> (stud)
-            """
-        dct = {"testName": testName, "studName": studName, "quest": quest, "answer": answer}
+    for quest, ans in answers.items():
+        q1 = """match (quest:QUESTION {name: $quest}) -[]-> (test:TEST {name: $testName}), (stud:STUDENT {name: $studName})
+                    create (quest) - [:ANSWERED {isTrue: $answer}] -> (stud)"""
+        dct = {'testName': testName, 'studName': studName, 'quest': quest, 'answer': ans}
         try:
             session.run(q1, dct)
         except Exception as e:
@@ -79,7 +77,7 @@ def getTrueAnswers(testName="Ввод и Вывод"):
 def getRecommendation(testName="Ввод и Вывод", studName="Vova"):
     q1 = """
         match (qs:QUESTION) -[]-> (:TEST {name: $testName}) -[]-> (stud:STUDENT {name: $studName})
-        match (rec:RECOMMENDATION) -[]-> (qs) -[:ANSWERED {isTrue: true}]-> (stud)
+        match (rec:RECOMMENDATION) -[]-> (qs) -[:ANSWERED {isTrue: false}]-> (stud)
         return rec.name as name
         """
     dct = {"testName": testName, "studName": studName}

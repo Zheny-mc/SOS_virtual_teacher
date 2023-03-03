@@ -36,7 +36,7 @@ def create():
         except:
             return "Получилась ошибка"
     else:
-        return render_template('create.html')
+        return render_template('testing.html')
 
 
 if __name__ == "__main__":

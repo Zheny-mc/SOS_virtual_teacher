@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Результаты:
+{% endblock %}
+
+{% block body %}
+<div class="bg-light p-5 rounded mt-3">
+    <h1 class="display-6">Результаты:</h1>
+    <p class="fs-3">Оценка: {{score}} баллов</p>
+    <p class="fs-3">Рекомендации:</p>
+    <ul class="list-group list-group-flush">
+        {% for r in rec %}
+        <li class="fs-5 bg-light list-group-item">{{r}}</li>
+        {% endfor %}
+    </ul>
+
+    <a class="btn btn-lg btn-primary" href="/" role="button">ХОРОШО</a>
+</div>
+{% endblock %}
